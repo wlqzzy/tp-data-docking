@@ -13,7 +13,7 @@ use TpDataDocking\Exception\HttpException;
  */
 trait Face
 {
-    private $namespace;
+    private string $namespace;
     public function __construct(string $namespace)
     {
         $this->namespace = $namespace;

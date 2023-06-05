@@ -78,7 +78,7 @@ class Core
 {
     public static function aaa()
     {
-        Docking::init()->api->apiRequest([]);
+        Docking::init()->api->user->apiRequest([]);
     }
 }
 ```
