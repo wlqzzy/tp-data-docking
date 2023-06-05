@@ -8,38 +8,90 @@ namespace TpDataDocking\Helper;
  */
 class Tree
 {
-    protected static $key;
-    protected static $pkey;
-    protected static $childKey;
+    protected static $key = 'id';
+    protected static $pkey = 'pid';
+    protected static $childKey = 'children';
     protected static $dataByKey;
     protected static $dataByPkey;
 
     /**
      * 初始化配置及数据
      *
+     * @param array $data 源数据
      * @param string $key 节点唯一标识字段
      * @param string $pkey 父级节点标识字段
      * @param string $childKey 子级集合字段
-     * @param array $data 源数据
      *
      * @author wlq
      * @since 1.0 20210820
      */
-    public static function initData(
-        string $key,
-        string $pkey,
+    public static function init(
         array $data,
+        string $key = 'id',
+        string $pkey = 'pid',
         string $childKey = 'children'
     ): void {
-        self::$key = $key;
-        self::$pkey = $pkey;
-        self::$childKey = $childKey;
+        self::setKey($key);
+        self::setPkey($pkey);
+        self::setChildKey($childKey);
+        self::setData($data);
+    }
+
+    /**
+     * 设置key
+     *
+     * @param string $key
+     *
+     * @author wlq
+     * @since 1.0 2023-06-05
+     */
+    public static function setKey(string $key): void
+    {
+        self::$key = $key ?: self::$key;
+    }
+
+    /**
+     * 设置pkey
+     *
+     * @param string $pkey
+     *
+     * @author wlq
+     * @since 1.0 2023-06-05
+     */
+    public static function setPkey(string $pkey): void
+    {
+        self::$pkey = $pkey ?: self::$pkey;
+    }
+
+    /**
+     * 设置childKey
+     *
+     * @param string $childKey
+     *
+     * @author wlq
+     * @since 1.0 2023-06-05
+     */
+    public static function setChildKey(string $childKey): void
+    {
+        self::$childKey = $childKey ?: self::$childKey;
+    }
+
+    /**
+     * 设置数据源
+     *
+     * @param array $data
+     *
+     * @author wlq
+     * @since 1.0 2023-06-05
+     */
+    public static function setData(array $data): void
+    {
         $data = array_map(function ($item) {
-            $item[self::$pkey] = isset($item[self::$pkey]) ? ($item[self::$pkey] ?: 0) : 0;
+            $item[self::$pkey] = empty($item[self::$pkey]) ? 0 : $item[self::$pkey];
             return $item;
         }, $data);
-        self::$dataByKey = array_column($data, null, $key);
-        self::$dataByPkey = self::arrayColumn($data, $pkey);
+        self::$dataByKey = array_column($data, null, self::$key);
+        self::$dataByPkey = self::arrayColumn($data);
     }
 
     /**
@@ -58,7 +110,7 @@ class Tree
         $pKey = $pKey ?: self::$pkey;
         $newData = [];
         foreach ($data as $v) {
-            $v[$pKey] = isset($v[$pKey]) ? ($v[$pKey] ?: 0) : 0;
+            $v[$pKey] = empty($v[$pKey]) ? 0 : $v[$pKey];
             $newData[$v[$pKey]] = $newData[$v[$pKey]] ?? [];
             $newData[$v[$pKey]][] = $v;
         }
