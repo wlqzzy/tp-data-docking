@@ -1,6 +1,6 @@
 <?php
 
-namespace TpDataDocking;
+namespace tpDataDocking;
 
 /**
  * 数据对接基类，建议继承本类通过property增加ide提示

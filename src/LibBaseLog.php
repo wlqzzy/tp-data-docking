@@ -6,9 +6,9 @@
  * Time: 16:49
  */
 
-namespace TpDataDocking;
+namespace tpDataDocking;
 
-use TpDataDocking\Log\Service;
+use tpDataDocking\log\Service;
 
 /**
  * LibBaseLog 操作记录基础类

@@ -6,14 +6,14 @@
  * Time: 10:42
  */
 
-namespace TpDataDocking\Exception;
+namespace tpDataDocking\exception;
 
 use Throwable;
 
 /**
  * 参数传入错误
  * Class ParamException
- * @package TpDataDocking\Exception
+ * @package tpDataDocking\exception
  */
 class ParamException extends AbstractException
 {

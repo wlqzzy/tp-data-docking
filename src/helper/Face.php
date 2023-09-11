@@ -1,10 +1,6 @@
 <?php
 
-namespace TpDataDocking\Helper;
-
-
-use TpDataDocking\Exception\ConfigException;
-use TpDataDocking\Exception\HttpException;
+namespace tpDataDocking\helper;
 
 /**
  * Class BaseApiService
@@ -13,7 +9,7 @@ use TpDataDocking\Exception\HttpException;
  */
 trait Face
 {
-    private string $namespace;
+    private $namespace;
     public function __construct(string $namespace)
     {
         $this->namespace = $namespace;

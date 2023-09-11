@@ -1,6 +1,6 @@
 <?php
 
-namespace TpDataDocking\Helper;
+namespace tpDataDocking\helper;
 
 use think\db\exception\DataNotFoundException;
 use think\db\exception\DbException;
@@ -21,16 +21,16 @@ trait Db
     /**
      * 获取数据模型
      *
-     * @param string|null $modelName
+     * @param string $modelName
      * @return string|Model
      *
      * @author wlq
      * @since 1.0 20210429
      */
-    protected function getModel(string $modelName = null)
+    protected function getModel(string $modelName = '')
     {
-        $modelName = $this->modelName.($modelName?:'');
-        return '\\app\model\\'.$modelName;
+        $modelName = $this->modelName . $modelName;
+        return '\\app\model\\' . $modelName;
     }
 
 
@@ -38,7 +38,7 @@ trait Db
      * 主键获取数据
      *
      * @param $id
-     * @param string|null $modelName
+     * @param string $modelName
      * @return array
      * @throws DbException
      * @throws \think\db\exception\DataNotFoundException
@@ -47,11 +47,11 @@ trait Db
      * @author wlq
      * @since 1.0 20210429
      */
-    public function getById($id, string $modelName = null):array
+    public function getById($id, string $modelName = ''): array
     {
         $modelPath = $this->getModel($modelName);
         $data = $modelPath::find($id);
-        return $data?$data->toArray():[];
+        return $data ? $data->toArray() : [];
     }
 
     /**
@@ -62,17 +62,21 @@ trait Db
      * @param null $where
      * @param string $fields
      * @param string|null $key
-     * @param string|null $modelName
+     * @param string $modelName
      * @return array
      *
      * @author wlq
      * @since 1.0 20210429
      */
-    public function getWhereByKey($where = null, string $fields = '*', string $key = null, string $modelName = null)
-    {
+    public function getWhereByKey(
+        $where = null,
+        string $fields = '*',
+        string $key = null,
+        string $modelName = ''
+    ): array {
         $modelPath = $this->getModel($modelName);
         $model = $modelPath::where($where);
-        $key = $key===null?$model->getPk():$key;
+        $key = $key === null ? $model->getPk() : $key;
         return $model->column($fields, $key);
     }
 
@@ -81,7 +85,7 @@ trait Db
      *
      * @param null $where
      * @param string $order
-     * @param string|null $modelName
+     * @param string $modelName
      * @return array
      * @throws DbException
      * @throws \think\db\exception\DataNotFoundException
@@ -90,11 +94,11 @@ trait Db
      * @author wlq
      * @since 1.0 20210608
      */
-    public function findWhere($where = null, string $order = '', string $modelName = null):array
+    public function findWhere($where = null, string $order = '', string $modelName = ''): array
     {
         $modelPath = $this->getModel($modelName);
         $data = $modelPath::where($where)->order($order)->find();
-        return $data?$data->toArray():[];
+        return $data ? $data->toArray() : [];
     }
     /**
      * 查询条件单表分页查询
@@ -104,7 +108,7 @@ trait Db
      * @param int $size
      * @param string $fields
      * @param string $order
-     * @param string|null $modelName
+     * @param string $modelName
      * @return array
      * @throws DbException
      * @throws \think\db\exception\DataNotFoundException
@@ -115,13 +119,12 @@ trait Db
      */
     public function getPage(
         $where = null,
-        $page = 1,
-        $size = 1,
-        $fields = '*',
-        $order = '',
-        string $modelName = null
-    ):array
-    {
+        int $page = 1,
+        int $size = 1,
+        string $fields = '*',
+        string $order = '',
+        string $modelName = ''
+    ): array {
         $modelPath = $this->getModel($modelName);
         $model = $modelPath::where($where);
         $data = $model->field($fields)->order($order)->page($page, $size)->select()->toArray();
@@ -141,22 +144,28 @@ trait Db
      * @author wlq
      * @since 1.0 20210429
      */
-    public function setPageData($rows, $page, $size, $count):array
+    public function setPageData($rows, $page, $size, $count): array
     {
-        return ['rows' => $rows, 'total' => $count, 'next' => $page*$size>=$count?0:1, 'page' => $page, 'size' => $size];
+        return [
+            'rows' => $rows,
+            'total' => $count,
+            'next' => $page * $size >= $count ? 0 : 1,
+            'page' => $page,
+            'size' => $size
+        ];
     }
     /**
      * 批量主键获取数据
      *
      * @param array $ids
      * @param string $fields
-     * @param string|null $modelName
+     * @param string $modelName
      * @return mixed
      *
      * @author wlq
      * @since 1.0 20210429
      */
-    public function getByIds(array $ids, string $fields = '*', string $modelName = null)
+    public function getByIds(array $ids, string $fields = '*', string $modelName = '')
     {
         $modelPath = $this->getModel($modelName);
         $model = new $modelPath();
@@ -168,16 +177,16 @@ trait Db
      * 单条新增数据
      * <br>新增数据默认使用post请求参数
      *
-     * @param array|null $data
-     * @param string|null $modelName
+     * @param array $data
+     * @param string $modelName
      * @return mixed
      *
      * @author wlq
      * @since 1.0 20210429
      */
-    public function insertOne(array $data = null, string $modelName = null)
+    public function insertOne(array $data = [], string $modelName = '')
     {
-        $data = $data?:app()->request->post();
+        $data = $data ?: app()->request->post();
         $modelPath = $this->getModel($modelName);
         $model = new $modelPath();
         $model->save($data);
@@ -189,14 +198,14 @@ trait Db
      * 批量添加数据
      * <br>新增数据默认使用post请求参数insertAll数据集合
      *
-     * @param array|null $data
-     * @param string|null $modelName
+     * @param array $data
+     * @param string $modelName
      * @return bool
      *
      * @author wlq
      * @since 1.0 20210428
      */
-    public function insertAll(array $data = null, string $modelName = null): bool
+    public function insertAll(array $data = [], string $modelName = ''): bool
     {
         $modelPath = $this->getModel($modelName);
         $model = new $modelPath();
@@ -221,7 +230,7 @@ trait Db
      * @author wlq
      * @since 1.0 20210428
      */
-    public function makeAllData($filedType, array $data = null, array $autoField = []): array
+    public function makeAllData($filedType, array $data = [], array $autoField = []): array
     {
         $data = $data ?: app()->request->post('insert_all');
         $insertAll = [];
@@ -246,8 +255,7 @@ trait Db
      *
      * @param $id
      * @param array $data
-     * @param string|null $modelName
-     * @return bool
+     * @param string $modelName
      * @throws \think\db\exception\DataNotFoundException
      * @throws \think\db\exception\DbException
      * @throws \think\db\exception\ModelNotFoundException
@@ -255,29 +263,30 @@ trait Db
      * @author wlq
      * @since 1.0 20210510
      */
-    public function updateById($id, array $data = null, string $modelName = null)
+    public function updateById($id, array $data = [], bool $checkEmpty = false, string $modelName = ''): void
     {
         $modelPath = $this->getModel($modelName);
-        if ($data) {
-            $model = new $modelPath();
-        } else {
-            $data = $data?:(app()->request->put()?:app()->request->post());
+        $data = $data ?: (app()->request->put() ?: app()->request->post());
+        if ($checkEmpty) {
             $model = $modelPath::find($id);
             if (!$model) {
                 throw new DataNotFoundException('更新失败：数据不存在或已删除');
             }
+        } else {
+            $model = new $modelPath();
+            $pk = $model->getPk();
+            $model = $model->where($pk, $id);
         }
-        $pk = $model->getPk();
-        $model->where($pk, $id)->save($data);
-        return true;
+        $model->save($data);
     }
 
     /**
      * 主键修改数据-批量
      *
-     * @param $id
+     * @param array$ids
      * @param array $data
-     * @param string|null $modelName
+     * @param string $key
+     * @param string $modelName
      * @throws \think\db\exception\DataNotFoundException
      * @throws \think\db\exception\DbException
      * @throws \think\db\exception\ModelNotFoundException
@@ -285,25 +294,25 @@ trait Db
      * @author wlq
      * @since 1.0 20210510
      */
-    public function updateByIds($ids, array $data = null, string $modelName = null): void
+    public function updateByIds(array $ids, array $data = [], string $key = '', string $modelName = ''): void
     {
-        $data = $data?:(app()->request->put()?:app()->request->post());
+        $data = $data ?: (app()->request->put() ?: app()->request->post());
         $modelPath = $this->getModel($modelName);
         $model = new $modelPath();
-        $pk = $model->getPk();
+        $pk = $key ?: $model->getPk();
         $model->where($pk, 'in', $ids)->data($data)->save();
     }
     /**
      * 主键删除数据
      *
-     * @param $ids
-     * @param string|null $modelName
+     * @param array $ids
+     * @param string $modelName
      * @return bool
      *
      * @author wlq
      * @since 1.0 20210510
      */
-    public function delByIds($ids = null, string $modelName = null): void
+    public function delByIds(array $ids, string $modelName = ''): void
     {
         $ids = $ids ?: app()->request->delete('ids');
         if ($ids) {

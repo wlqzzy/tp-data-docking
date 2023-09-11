@@ -3,19 +3,19 @@
  * Created by PhpStorm.
  * User: aiChenK
  * Date: 2020-04-28
- * Time: 20:23
+ * Time: 20:16
  */
 
-namespace TpDataDocking\Exception;
+namespace tpDataDocking\exception;
 
 use Throwable;
 
 /**
- * 服务错误
- * Class ServerException
- * @package TpDataDocking\Exception
+ * 找不到对应类
+ * Class ClassNotFoundException
+ * @package tpDataDocking\exception
  */
-class ServerException extends AbstractException
+class ClassNotFoundException extends AbstractException
 {
     protected $httpCode = 500;
 

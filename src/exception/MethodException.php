@@ -6,14 +6,14 @@
  * Time: 10:42
  */
 
-namespace TpDataDocking\Exception;
+namespace tpDataDocking\exception;
 
 use Throwable;
 
 /**
  * 方法请求错误
  * Class MethodException
- * @package TpDataDocking\Exception
+ * @package tpDataDocking\exception
  */
 class MethodException extends AbstractException
 {

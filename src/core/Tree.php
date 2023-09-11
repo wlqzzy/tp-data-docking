@@ -1,18 +1,14 @@
 <?php
 
-namespace TpDataDocking\Helper;
+namespace tpDataDocking\core;
 
-/**
- * 通用的树型类
- * @author Lee
- */
 class Tree
 {
-    protected static $key = 'id';
-    protected static $pkey = 'pid';
-    protected static $childKey = 'children';
-    protected static $dataByKey;
-    protected static $dataByPkey;
+    protected $key = 'id';
+    protected $pkey = 'pid';
+    protected $childKey = 'children';
+    protected $dataByKey;
+    protected $dataByPkey;
 
     /**
      * 初始化配置及数据
@@ -21,77 +17,87 @@ class Tree
      * @param string $key 节点唯一标识字段
      * @param string $pkey 父级节点标识字段
      * @param string $childKey 子级集合字段
+     * @return $this
      *
      * @author wlq
-     * @since 1.0 20210820
+     * @since 1.0 2023-09-08
      */
-    public static function init(
+    public function init(
         array $data,
         string $key = 'id',
         string $pkey = 'pid',
         string $childKey = 'children'
-    ): void {
-        self::setKey($key);
-        self::setPkey($pkey);
-        self::setChildKey($childKey);
-        self::setData($data);
+    ): Tree {
+        $this->setKey($key);
+        $this->setPkey($pkey);
+        $this->setChildKey($childKey);
+        $this->setData($data);
+        return $this;
     }
 
     /**
      * 设置key
      *
      * @param string $key
+     * @return $this
      *
      * @author wlq
-     * @since 1.0 2023-06-05
+     * @since 1.0 2023-09-08
      */
-    public static function setKey(string $key): void
+    public function setKey(string $key): Tree
     {
-        self::$key = $key ?: self::$key;
+        $this->key = $key ?: $this->key;
+        return $this;
     }
 
     /**
      * 设置pkey
      *
      * @param string $pkey
+     * @return $this
      *
      * @author wlq
-     * @since 1.0 2023-06-05
+     * @since 1.0 2023-09-08
      */
-    public static function setPkey(string $pkey): void
+    public function setPkey(string $pkey): Tree
     {
-        self::$pkey = $pkey ?: self::$pkey;
+        $this->pkey = $pkey ?: $this->pkey;
+        return $this;
     }
 
     /**
      * 设置childKey
      *
      * @param string $childKey
+     * @return $this
      *
      * @author wlq
-     * @since 1.0 2023-06-05
+     * @since 1.0 2023-09-08
      */
-    public static function setChildKey(string $childKey): void
+    public function setChildKey(string $childKey): Tree
     {
-        self::$childKey = $childKey ?: self::$childKey;
+        $this->childKey = $childKey ?: $this->childKey;
+        return $this;
     }
 
     /**
      * 设置数据源
      *
      * @param array $data
+     * @return $this
      *
      * @author wlq
-     * @since 1.0 2023-06-05
+     * @since 1.0 2023-09-08
      */
-    public static function setData(array $data): void
+    public function setData(array $data): Tree
     {
         $data = array_map(function ($item) {
-            $item[self::$pkey] = empty($item[self::$pkey]) ? 0 : $item[self::$pkey];
+            $item[$this->pkey] = empty($item[$this->pkey]) ? 0 : $item[$this->pkey];
             return $item;
         }, $data);
-        self::$dataByKey = array_column($data, null, self::$key);
-        self::$dataByPkey = self::arrayColumn($data);
+        $this->dataByKey = array_column($data, null, $this->key);
+        $this->dataByPkey = $this->arrayColumn($data);
+        return $this;
     }
 
     /**
@@ -99,15 +105,14 @@ class Tree
      *
      * @param array $data
      * @param string $pKey
-     *
      * @return array
      *
      * @author wlq
-     * @since 1.0 2023-03-20
+     * @since 1.0 2023-09-08
      */
-    public static function arrayColumn(array $data, string $pKey = ''): array
+    public function arrayColumn(array $data, string $pKey = ''): array
     {
-        $pKey = $pKey ?: self::$pkey;
+        $pKey = $pKey ?: $this->pkey;
         $newData = [];
         foreach ($data as $v) {
             $v[$pKey] = empty($v[$pKey]) ? 0 : $v[$pKey];
@@ -134,20 +139,20 @@ class Tree
      * @author wlq
      * @since 1.0 2023-03-20
      */
-    public static function makeTree($value, $fun = null): array
+    public function getTree($value, $fun = null): array
     {
-        $data = self::$dataByPkey[$value] ?? [];
+        $data = $this->dataByPkey[$value] ?? [];
         $tree = [];
         foreach ($data as $v) {
-            $nv = $v[self::$key];
-            $pv = $v[self::$pkey];
+            $nv = $v[$this->key];
+            $pv = $v[$this->pkey];
             if ($fun) {
                 $v = $fun($v);
             }
             //防止自定义方法删除了关联关系字段
-            $v[self::$key] = $nv;
-            $v[self::$pkey] = $pv;
-            $v[self::$childKey] = self::makeTree($v[self::$key], $fun);
+            $v[$this->key] = $nv;
+            $v[$this->pkey] = $pv;
+            $v[$this->childKey] = $this->getTree($v[$this->key], $fun);
             $tree[] = $v;
         }
         return $tree;
@@ -163,11 +168,11 @@ class Tree
      * @author wlq
      * @since 1.0 2023-03-21
      */
-    public static function getAllChildren($value): array
+    public function getAllChildren($value): array
     {
-        $data = self::$dataByPkey[$value] ?? [];
+        $data = $this->dataByPkey[$value] ?? [];
         foreach ($data as $v) {
-            $children = self::getAllChildren($v[self::$key]);
+            $children = $this->getAllChildren($v[$this->key]);
             $data = array_merge($data, $children);
         }
         return $data;
@@ -190,20 +195,20 @@ class Tree
      * @author wlq
      * @since 1.0 2023-03-21
      */
-    public static function getParentsLink($value, array $children, $fun = null): array
+    public function getParentsLink($value, array $children, $fun = null): array
     {
-        if (isset(self::$dataByKey[$value])) {
-            $data = self::$dataByKey[$value];
-            $nv = $data[self::$key];
-            $pv = $data[self::$pkey];
+        if (isset($this->dataByKey[$value])) {
+            $data = $this->dataByKey[$value];
+            $nv = $data[$this->key];
+            $pv = $data[$this->pkey];
             if ($fun) {
                 $data = $fun($data);
             }
             //防止自定义方法删除了关联关系字段
-            $data[self::$key] = $nv;
-            $data[self::$pkey] = $pv;
-            $data[self::$childKey] = $children ?: [];
-            return self::getParentsLink($data[self::$pkey], [$data], $fun);
+            $data[$this->key] = $nv;
+            $data[$this->pkey] = $pv;
+            $data[$this->childKey] = $children ?: [];
+            return $this->getParentsLink($data[$this->pkey], [$data], $fun);
         } else {
             return $children;
         }
@@ -220,11 +225,11 @@ class Tree
      * @author wlq
      * @since 1.0 2023-03-21
      */
-    public static function getParents($value, array $parents = []): array
+    public function getParents($value, array $parents = []): array
     {
-        if (isset(self::$dataByKey[$value])) {
-            $parents[] = self::$dataByKey[$value];
-            return self::getParents(self::$dataByKey[$value][self::$pkey], $parents);
+        if (isset($this->dataByKey[$value])) {
+            $parents[] = $this->dataByKey[$value];
+            return $this->getParents($this->dataByKey[$value][$this->pkey], $parents);
         } else {
             return $parents;
         }

@@ -25,7 +25,7 @@
 ```php
 namespace app\helper;
 
-use TpDataDocking\Operation;
+use tpDataDocking\Operation;
 /**
  * @property \app\operation\face\Api $api
  */
@@ -39,7 +39,7 @@ class Docking extends Operation
 ```php
 namespace app\operation\face;
 
-use TpDataDocking\Helper\Face;
+use tpDataDocking\helper\Face;
 /**
  * @property \app\operation\api\User $user
  */
@@ -53,7 +53,7 @@ class Api
 ```php
 namespace app\operation\api;
 
-use TpDataDocking\Helper\Api;
+use tpDataDocking\helper\Api;
 
 class User
 {

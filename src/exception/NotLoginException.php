@@ -6,14 +6,14 @@
  * Time: 10:42
  */
 
-namespace TpDataDocking\Exception;
+namespace tpDataDocking\exception;
 
 use Throwable;
 
 /**
  * 未登录错误
  * Class NotLoginException
- * @package TpDataDocking\Exception
+ * @package tpDataDocking\exception
  */
 class NotLoginException extends AbstractException
 {

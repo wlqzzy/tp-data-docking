@@ -6,14 +6,14 @@
  * Time: 20:17
  */
 
-namespace TpDataDocking\Exception;
+namespace tpDataDocking\exception;
 
 use Throwable;
 
 /**
  * 验证错误
  * Class ValidateException
- * @package TpDataDocking\Exception
+ * @package tpDataDocking\exception
  */
 class ValidateException extends AbstractException
 {

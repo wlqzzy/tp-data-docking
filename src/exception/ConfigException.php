@@ -6,14 +6,14 @@
  * Time: 20:13
  */
 
-namespace TpDataDocking\Exception;
+namespace tpDataDocking\exception;
 
 use Throwable;
 
 /**
  * 配置错误
  * Class ConfigException
- * @package TpDataDocking\Exception
+ * @package tpDataDocking\exception
  */
 class ConfigException extends AbstractException
 {

@@ -1,12 +1,12 @@
 <?php
 
-namespace TpDataDocking\Helper;
+namespace tpDataDocking\helper;
 
 use HttpClient\Core\Response;
 use HttpClient\HttpClient;
-use TpDataDocking\Exception\ConfigException;
-use TpDataDocking\Exception\HttpException;
-use TpDataDocking\LibBaseLog;
+use tpDataDocking\exception\ConfigException;
+use tpDataDocking\exception\HttpException;
+use tpDataDocking\LibBaseLog;
 
 /**
  * 三方服务trait
@@ -19,6 +19,7 @@ trait Api
     protected $name;
     protected $errorField = 'msg';
     protected $descField = 'description';
+    protected $codeField = 'code';
 
     /**
      * @throws ConfigException
@@ -82,6 +83,7 @@ trait Api
      * @param string $msg
      * @param string $errField
      * @param string $descField
+     * @param string $codeField
      * @param bool $saveLog
      * @throws HttpException
      *
@@ -94,47 +96,27 @@ trait Api
         string $msg,
         string $errField = '',
         string $descField = '',
+        string $codeField = '',
         bool $saveLog = true
     ): void {
         $info = $response->getInfo();
-        if ($response->isSuccess()) {
+        $data = $response->getJsonBody();
+        $codeField = $codeField ?: $this->codeField;
+        //http状态为200 且 返回信息不存在code参数或code参数为200，则为请求成功
+        if (
+            $response->isSuccess()
+            && (
+                !isset($data[$codeField])
+                || (isset($data[$codeField]) && floor($data[$codeField] / 100) == 2)
+            )
+        ) {
             //默认记录非get请求记录
             if ($saveLog && strtolower($info->method) != 'get') {
                 LibBaseLog::get()->service->setLog($info);
             }
             return;
         }
-        $errorMsg = $this->getError($response, $errField ?: $this->errorField);
-        $descMsg  = $this->name . ':' . $this->getError($response, $descField ?: $this->descField);
-        $e = new HttpException($errorMsg ?: $msg, $descMsg);
-        $e->setCurlInfo($info);
-        LibBaseLog::get()->service->setLog($info);
-        throw $e;
-    }
-
-    /**
-     * 抛出返回体异常
-     *
-     * @param Response $response
-     * @param string $msg
-     * @param string $errField
-     * @param string $descField
-     * @param bool $saveLog
-     * @throws HttpException
-     *
-     * @author wlq
-     * @since 1.5 2022-06-27
-     */
-    protected function throwIfBodyError(
-        Response $response,
-        string $msg,
-        string $errField = '',
-        string $descField = '',
-        bool $saveLog = true
-    ): void {
-        $info = $response->getInfo();
-        $data = $response->getJsonBody();
-        if ($response->isSuccess() && isset($data['code']) && floor($data['code'] / 100) == 2) {
+        if ($response->isSuccess()) {
             //默认记录非get请求记录
             if ($saveLog && strtolower($info->method) != 'get') {
                 LibBaseLog::get()->service->setLog($info);

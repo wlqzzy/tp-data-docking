@@ -6,14 +6,14 @@
  * Time: 10:42
  */
 
-namespace TpDataDocking\Exception;
+namespace tpDataDocking\exception;
 
 use Throwable;
 
 /**
  * 传入参数找不到对应数据等（前后端不匹配）
  * Class ConflictException
- * @package TpDataDocking\Exception
+ * @package tpDataDocking\exception
  */
 class ConflictException extends AbstractException
 {

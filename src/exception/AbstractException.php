@@ -6,7 +6,7 @@
  * Time: 10:43
  */
 
-namespace TpDataDocking\Exception;
+namespace tpDataDocking\exception;
 
 use Throwable;
 

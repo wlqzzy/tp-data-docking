@@ -1,6 +1,6 @@
 <?php
 
-namespace TpDataDocking\Log;
+namespace tpDataDocking\log;
 
 abstract class Base
 {

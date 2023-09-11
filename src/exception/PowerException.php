@@ -6,14 +6,14 @@
  * Time: 10:42
  */
 
-namespace TpDataDocking\Exception;
+namespace tpDataDocking\exception;
 
 use Throwable;
 
 /**
  * 权限错误，无操作权限
  * Class PowerException
- * @package TpDataDocking\Exception
+ * @package tpDataDocking\exception
  */
 class PowerException extends AbstractException
 {

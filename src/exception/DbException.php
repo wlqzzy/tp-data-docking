@@ -6,14 +6,14 @@
  * Time: 10:42
  */
 
-namespace TpDataDocking\Exception;
+namespace tpDataDocking\exception;
 
 use Throwable;
 
 /**
  * 数据库处理错误
  * Class DbException
- * @package TpDataDocking\Exception
+ * @package tpDataDocking\exception
  */
 class DbException extends AbstractException
 {

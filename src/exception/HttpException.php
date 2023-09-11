@@ -6,14 +6,14 @@
  * Time: 20:18
  */
 
-namespace TpDataDocking\Exception;
+namespace tpDataDocking\exception;
 
 use Throwable;
 
 /**
  * http请求错误
  * Class HttpException
- * @package TpDataDocking\Exception
+ * @package tpDataDocking\exception
  */
 class HttpException extends AbstractException
 {
