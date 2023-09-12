@@ -41,15 +41,15 @@ trait Db
     /**
      * 获取数据模型
      *
-     * @param string $modelName
+     * @param string $suffixName
      * @return string|Model
      *
      * @author wlq
      * @since 1.0 20210429
      */
-    protected function getModel(string $modelName = '')
+    protected function getModel(string $suffixName = '')
     {
-        $modelName = $this->modelName . $modelName;
+        $modelName = $this->modelName . $suffixName;
         return '\\app\model\\' . $modelName;
     }
 
