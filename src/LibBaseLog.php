@@ -8,12 +8,14 @@
 
 namespace tpDataDocking;
 
+use tpDataDocking\log\Mysql;
 use tpDataDocking\log\Service;
 
 /**
  * LibBaseLog 操作记录基础类
  *
  * @property Service $service
+ * @property Mysql $mysql
  */
 class LibBaseLog
 {
@@ -23,14 +25,15 @@ class LibBaseLog
     private static $face;
 
     private $logClass = [
-        'service' => Service::class
+        'service' => Service::class,
+        'mysql' => Mysql::class
     ];
 
     /**
      * 获取日志记录对象
      *
      * @param string $logKey
-     * @return LibBaseLog | Service
+     * @return LibBaseLog | Service | Mysql
      *
      * @author wlq
      * @since 1.0 2022-06-27
@@ -41,28 +44,6 @@ class LibBaseLog
             self::$face = new self();
         }
         return $logKey ? self::$face->$logKey : self::$face;
-    }
-
-    /**
-     * 获取操作记录
-     *
-     * @param string $logKey
-     * @return mixed
-     *
-     * @author wlq
-     * @since 1.0 2022-06-27
-     */
-    public static function getLog(string $logKey = '')
-    {
-        $return = [];
-        if ($logKey) {
-            $return = self::get($logKey)->getLog();
-        } else {
-            foreach (self::$face->logClass as $key) {
-                $return[$key] = self::get($logKey)->getLog();
-            }
-        }
-        return $return;
     }
 
     public function __get($name)

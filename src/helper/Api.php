@@ -20,16 +20,17 @@ trait Api
     protected $errorField = 'msg';
     protected $descField = 'description';
     protected $codeField = 'code';
+    protected $enableTrace = true;
 
     /**
      * @throws ConfigException
      */
     public function __construct()
     {
-        if (empty($this->serviceName)) {
+        if (empty($this->name)) {
             throw new ConfigException('未配置' . $this->name . '服务地址');
         }
-        $url = env('service.' . $this->serviceName);
+        $url = env('service.' . $this->name);
         if (!$url) {
             throw new ConfigException('缺少' . $this->name . '服务地址配置');
         }
@@ -54,6 +55,9 @@ trait Api
         $this->client[$url]->setConnExceptionHandle(function ($msg) {
             throw new HttpException('连接失败', $this->name . ':' . $msg);
         });
+        if ($this->enableTrace) {
+            $this->setTrace($this->client[$url]);
+        }
         return $this->client[$url];
     }
 
@@ -129,5 +133,81 @@ trait Api
         $e->setCurlInfo($info);
         LibBaseLog::get()->service->setLog($info);
         throw $e;
+    }
+
+    /**
+     * 获取http头
+     *
+     * @param string $name
+     * @return mixed|string
+     *
+     * @author aiChenK
+     */
+    public function getHeader(string $name)
+    {
+        $name = strtoupper($name);
+        $name = str_replace('-', '_', $name);
+        return $_SERVER['HTTP_' . $name] ?? '';
+    }
+
+    /**
+     * 设置头部所需参数
+     *
+     * @param HttpClient $client
+     *
+     * @author aiChenK
+     */
+    private function setTrace(HttpClient $client): void
+    {
+        //X-B3-TraceId = HTTP_X_B3_TRACEID
+        $traceId = $this->getHeader('X-B3-TraceId') ?? $this->getTraceId();
+        $spanId  = $this->getSpanId();
+        $client->setHeader('X-B3-SpanId', $spanId);
+        $client->setHeader('X-B3-TraceId', $traceId);
+        LibBaseLog::get()->service->setTraceId($traceId)->setSpanId($spanId);
+
+        //附加转发
+        $headers = ['xh-d-version', 'xh-gray-service'];
+        foreach ($headers as $name) {
+            $val = $this->getHeader($name);
+            if ($val) {
+                $client->setHeader($name, $val);
+            }
+        }
+    }
+
+    /**
+     * 生成spanId
+     *
+     * @return string
+     *
+     * @author Wcx
+     */
+    protected function getSpanId(): string
+    {
+        $chars  = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        $string = "";
+        while (strlen($string) < 8) {
+            $string .= substr($chars, (rand() % (strlen($chars))), 1);
+        }
+        return bin2hex($string);
+    }
+
+    /**
+     * 生成traceId
+     *
+     * @return string
+     *
+     * @author Wcx
+     */
+    protected function getTraceId(): string
+    {
+        $time   = time();
+        $chars  = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        $string = "";
+        while (strlen($string) < 6) {
+            $string .= substr($chars, (rand() % (strlen($chars))), 1);
+        }
+        return bin2hex($time . $string);
     }
 }

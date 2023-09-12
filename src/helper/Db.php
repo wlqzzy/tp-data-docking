@@ -5,6 +5,7 @@ namespace tpDataDocking\helper;
 use think\db\exception\DataNotFoundException;
 use think\db\exception\DbException;
 use think\Model;
+use tpDataDocking\LibBaseLog;
 
 /**
  * tp数据库操作trait
@@ -17,6 +18,25 @@ trait Db
      * @var string
      */
     protected $modelName;
+    /**
+     * @var bool 是否自动记录sql
+     */
+    protected $autoLogSqlStatus = false;
+
+    /**
+     * 设置是否自动记录sql
+     *
+     * @param bool $status
+     * @return $this
+     *
+     * @author wlq
+     * @since 1.0 2023-09-12
+     */
+    public function setAutoLogSqlStatus(bool $status = false): self
+    {
+        $this->autoLogSqlStatus = $status;
+        return $this;
+    }
 
     /**
      * 获取数据模型
@@ -319,6 +339,16 @@ trait Db
             !is_array($ids) and $ids = explode(',', $ids);
             $modelPath = $this->getModel($modelName);
             $modelPath::destroy($ids);
+        }
+    }
+
+    /**
+     * 若开启自动记录sql，则函数执行结束时自动记录sql
+     */
+    public function __destruct()
+    {
+        if ($this->autoLogSqlStatus) {
+            LibBaseLog::get()->mysql->autoSetLog();
         }
     }
 }

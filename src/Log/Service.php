@@ -2,7 +2,7 @@
 
 namespace tpDataDocking\log;
 
-class Service extends Base
+class Service implements LogInterface
 {
     private $traceId = '';
     private $spanId = '';
@@ -56,18 +56,19 @@ class Service extends Base
     /**
      * 记录服务请求详情
      *
-     * @param $curlInfo
+     * @param mixed $data
+     * @param string $key
      *
      * @author wlq
      * @since 1.0 2022-06-27
      */
-    public function setLog($curlInfo): void
+    public function setLog($data, string $key = ''): void
     {
-        if ($this->spanId) {
-            $this->curlInfo[$this->spanId] = $curlInfo;
-            $this->spanId = '';
+        $key = $key ?: $this->spanId;
+        if ($key) {
+            $this->curlInfo[$key] = $data;
         } else {
-            $this->curlInfo[] = $curlInfo;
+            $this->curlInfo[] = $data;
         }
     }
 }
