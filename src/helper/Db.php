@@ -10,7 +10,7 @@ use tpDataDocking\LibBaseLog;
 /**
  * tp数据库操作trait
  */
-trait Db
+abstract class Db
 {
     /**
      * 数据模型名称

@@ -7,19 +7,18 @@ namespace tpDataDocking\helper;
  * @package app
  * @codeCoverageIgnore
  */
-trait Face
+abstract class Face
 {
-    private $namespace;
-    public function __construct(string $namespace)
+    protected $classArr = [];
+    protected $classService = [];
+
+    public function __call($name, $arguments)
     {
-        $this->namespace = $namespace;
-    }
-    public function __get($name)
-    {
-        $class = $this->namespace . ucfirst($name);
-        if (class_exists($class) && empty($this->$name)) {
-            $this->$name = new $class();
+        $class = $this->classArr[$name] ?? null;
+        if ($class) {
+            !isset($this->classService[$name]) && $this->classService[$name] = new $class();
+            return $this->classService[$name];
         }
-        return $this->$name;
+        return call_user_func_array([$this, $name], $arguments);
     }
 }

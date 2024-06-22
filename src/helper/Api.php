@@ -11,7 +11,7 @@ use tpDataDocking\LibBaseLog;
 /**
  * 三方服务trait
  */
-trait Api
+abstract class Api
 {
     protected $client;
     protected $service;

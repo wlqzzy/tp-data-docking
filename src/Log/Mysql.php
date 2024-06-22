@@ -2,8 +2,6 @@
 
 namespace tpDataDocking\log;
 
-use think\facade\Db;
-
 class Mysql implements LogInterface
 {
     private $sqlList = [];
