@@ -49,7 +49,7 @@ abstract class Db
      */
     protected function getModel(string $suffixName = '')
     {
-        $modelName = $this->modelName . $suffixName;
+        $modelName = $this->modelName . ucfirst($suffixName);
         return '\\app\model\\' . $modelName;
     }
 

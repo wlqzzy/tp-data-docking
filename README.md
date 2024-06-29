@@ -170,7 +170,7 @@ class Order extends Db
     protected $modelName = 'order';
     public function getPageList(int $page, int $size)
     {
-        $modelPath = $this->getModel('suffix_');
+        $modelPath = $this->getModel('suffix');
         return $modelPath::where('')->select()->toArray();
     }
 }
